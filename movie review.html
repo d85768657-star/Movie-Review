@@ -1,0 +1,534 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CineScope | Movie Reviews</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #10121c;
+    color: #ffffff;
+}
+
+header {
+    background: #191c2b;
+    padding: 20px 7%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.logo {
+    color: #ffbd39;
+    font-size: 27px;
+    font-weight: bold;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+}
+
+nav a:hover {
+    color: #ffbd39;
+}
+
+.hero {
+    text-align: center;
+    padding: 65px 20px;
+    background: linear-gradient(120deg, #351b56, #171c35, #6a233b);
+}
+
+.hero h1 {
+    font-size: clamp(30px, 5vw, 48px);
+    margin-bottom: 15px;
+}
+
+.hero h1 span {
+    color: #ffbd39;
+}
+
+.hero p {
+    color: #dedee8;
+    margin-bottom: 25px;
+}
+
+.search-box {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+input, select {
+    padding: 13px;
+    border-radius: 8px;
+    border: 1px solid #44485d;
+    background: #202438;
+    color: white;
+    font-size: 15px;
+}
+
+input {
+    width: min(320px, 90vw);
+}
+
+button {
+    background: #ffbd39;
+    color: #171717;
+    padding: 13px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #ffd477;
+}
+
+.section {
+    padding: 40px 7%;
+}
+
+.section-title {
+    font-size: 27px;
+    margin-bottom: 25px;
+}
+
+.section-title span {
+    color: #ffbd39;
+}
+
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+    gap: 25px;
+}
+
+.movie-card {
+    background: #1c2030;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid #303448;
+    transition: transform 0.3s, border-color 0.3s;
+}
+
+.movie-card:hover {
+    transform: translateY(-7px);
+    border-color: #ffbd39;
+}
+
+.poster {
+    width: 100%;
+    height: 310px;
+    object-fit: cover;
+    display: block;
+    background: #292d40;
+}
+
+.movie-info {
+    padding: 17px;
+}
+
+.movie-info h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.rating {
+    color: #ffbd39;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.tag {
+    display: inline-block;
+    background: #34384e;
+    color: #e4e5ee;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    margin-bottom: 12px;
+}
+
+.movie-info p {
+    color: #c6c8d5;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.details-btn {
+    width: 100%;
+    margin-top: 7px;
+}
+
+.review-section {
+    background: #191c2b;
+    padding: 35px 7%;
+}
+
+.review-card {
+    background: #24283b;
+    padding: 22px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    border-left: 4px solid #ffbd39;
+}
+
+.review-card h3 {
+    margin-bottom: 10px;
+}
+
+.review-card p {
+    color: #d0d2dd;
+    line-height: 1.7;
+}
+
+footer {
+    text-align: center;
+    padding: 25px;
+    background: #10121c;
+    color: #aeb1c1;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 10;
+    padding: 20px;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: #202438;
+    max-width: 550px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 25px;
+    border-radius: 15px;
+}
+
+.modal-content h2 {
+    color: #ffbd39;
+    margin-bottom: 15px;
+}
+
+.modal-content p {
+    line-height: 1.8;
+    color: #e0e1e9;
+    margin-bottom: 12px;
+}
+
+.close-btn {
+    float: right;
+    margin-bottom: 15px;
+}
+
+.empty {
+    text-align: center;
+    padding: 30px;
+    color: #ffbd39;
+    display: none;
+}
+
+@media (max-width: 600px) {
+    header {
+        justify-content: center;
+        text-align: center;
+    }
+
+    nav a {
+        margin: 0 7px;
+    }
+
+    .section {
+        padding: 30px 5%;
+    }
+
+    .poster {
+        height: 340px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">🎬 CineScope</div>
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#movies">Movies</a>
+        <a href="#reviews">Reviews</a>
+    </nav>
+</header>
+
+<section class="hero" id="home">
+    <h1>Discover. Watch. <span>Review.</span></h1>
+    <p>Your destination for movie ratings, reviews and cinema discoveries.</p>
+
+    <div class="search-box">
+        <input type="text" id="search"
+            placeholder="Search movies by title..."
+            aria-label="Search movies">
+        <select id="genre" aria-label="Filter by genre">
+            <option value="all">All Genres</option>
+            <option value="Action">Action</option>
+            <option value="Sci-Fi">Sci-Fi</option>
+            <option value="Drama">Drama</option>
+            <option value="Adventure">Adventure</option>
+        </select>
+        <button onclick="filterMovies()">Search</button>
+    </div>
+</section>
+
+<section class="section" id="movies">
+    <h2 class="section-title">Trending <span>Movies</span></h2>
+
+    <div class="movie-grid" id="movieGrid"></div>
+    <div class="empty" id="empty">No movies found. Try another search!</div>
+</section>
+
+<section class="review-section" id="reviews">
+    <h2 class="section-title">Critics' <span>Reviews</span></h2>
+
+    <div class="review-card">
+        <h3>⭐ Dune: Part Two — 9/10</h3>
+        <p>A visually stunning science-fiction film with powerful performances,
+        impressive world-building and an engaging story.</p>
+    </div>
+
+    <div class="review-card">
+        <h3>⭐ Interstellar — 9.5/10</h3>
+        <p>An emotional space adventure that combines science, family and
+        breathtaking visuals into a memorable cinematic experience.</p>
+    </div>
+
+    <div class="review-card">
+        <h3>⭐ The Dark Knight — 9.5/10</h3>
+        <p>A gripping superhero crime drama praised for its storytelling,
+        memorable characters and intense performances.</p>
+    </div>
+</section>
+
+<div class="modal" id="movieModal" role="dialog"
+     aria-modal="true" aria-labelledby="modalTitle"
+     onclick="if(event.target===this) closeModal()">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closeModal()">✖ Close</button>
+        <h2 id="modalTitle"></h2>
+        <div id="modalDetails"></div>
+    </div>
+</div>
+
+<footer>
+    <p>🎬 CineScope — Explore the world of cinema.</p>
+    <p>Movie information and ratings are illustrative demo content.</p>
+    <p>© 2026 CineScope | Movie Review & Rating Website</p>
+</footer>
+
+<script>
+const movies = [
+    {
+        title: "Interstellar",
+        genre: "Sci-Fi",
+        date: "2014-11-07",
+        cast: "Matthew McConaughey, Anne Hathaway",
+        rating: 9.5,
+        critic: "9.5/10",
+        poster: "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
+        synopsis: "A group of explorers travels through a wormhole in space to find a new home for humanity.",
+        review: "A moving science-fiction masterpiece with stunning visuals and emotional storytelling."
+    },
+    {
+        title: "The Dark Knight",
+        genre: "Action",
+        date: "2008-07-18",
+        cast: "Christian Bale, Heath Ledger",
+        rating: 9.0,
+        critic: "9/10",
+        poster: "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
+        synopsis: "Batman faces the Joker, a criminal mastermind who brings chaos to Gotham City.",
+        review: "A gripping crime drama with memorable performances and excellent direction."
+    },
+    {
+        title: "Dune: Part Two",
+        genre: "Sci-Fi",
+        date: "2024-03-01",
+        cast: "Timothée Chalamet, Zendaya",
+        rating: 8.5,
+        critic: "9/10",
+        poster: "https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg",
+        synopsis: "Paul Atreides joins the Fremen while seeking justice and confronting his destiny on Arrakis.",
+        review: "A grand science-fiction adventure with remarkable cinematography and scale."
+    },
+    {
+        title: "Inception",
+        genre: "Action",
+        date: "2010-07-16",
+        cast: "Leonardo DiCaprio, Joseph Gordon-Levitt",
+        rating: 8.8,
+        critic: "9/10",
+        poster: "https://image.tmdb.org/t/p/w500/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg",
+        synopsis: "A skilled thief enters people's dreams to steal secrets and attempts an unusual mission.",
+        review: "An imaginative thriller that combines complex ideas with exciting action."
+    },
+    {
+        title: "The Shawshank Redemption",
+        genre: "Drama",
+        date: "1994-09-23",
+        cast: "Tim Robbins, Morgan Freeman",
+        rating: 9.3,
+        critic: "9.5/10",
+        poster: "https://image.tmdb.org/t/p/w500/9cqNxx0GxF0bflZmeSMuL5tnGzr.jpg",
+        synopsis: "Two prisoners develop a lasting friendship while holding on to hope inside prison.",
+        review: "A powerful drama about friendship, patience and the strength of hope."
+    },
+    {
+        title: "Spider-Man: No Way Home",
+        genre: "Adventure",
+        date: "2021-12-17",
+        cast: "Tom Holland, Zendaya",
+        rating: 8.2,
+        critic: "8.5/10",
+        poster: "https://image.tmdb.org/t/p/w500/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+        synopsis: "Peter Parker faces unexpected challenges when a spell causes visitors from other universes to arrive.",
+        review: "An entertaining superhero adventure filled with action and emotional moments."
+    }
+];
+
+const grid = document.getElementById("movieGrid");
+
+function renderMovies(list) {
+    grid.innerHTML = "";
+
+    document.getElementById("empty").style.display =
+        list.length ? "none" : "block";
+
+    list.forEach((movie) => {
+        const card = document.createElement("article");
+        card.className = "movie-card";
+
+        const poster = document.createElement("img");
+        poster.className = "poster";
+        poster.src = movie.poster;
+        poster.alt = movie.title + " movie poster";
+        poster.loading = "lazy";
+
+        poster.onerror = function () {
+            this.onerror = null;
+            this.src = "https://placehold.co/400x600/202438/ffbd39?text=Movie+Poster";
+        };
+
+        const info = document.createElement("div");
+        info.className = "movie-info";
+
+        const title = document.createElement("h3");
+        title.textContent = movie.title;
+
+        const rating = document.createElement("div");
+        rating.className = "rating";
+        rating.textContent = "⭐ " + movie.rating + " / 10";
+
+        const genre = document.createElement("span");
+        genre.className = "tag";
+        genre.textContent = movie.genre;
+
+        const date = document.createElement("p");
+        date.textContent = "📅 Release: " + movie.date;
+
+        const cast = document.createElement("p");
+        cast.textContent = "🎭 Cast: " + movie.cast;
+
+        const synopsis = document.createElement("p");
+        synopsis.textContent = movie.synopsis;
+
+        const button = document.createElement("button");
+        button.className = "details-btn";
+        button.textContent = "Read Full Review";
+        button.onclick = () => showDetails(movie);
+
+        info.append(title, rating, genre, date, cast, synopsis, button);
+        card.append(poster, info);
+        grid.appendChild(card);
+    });
+}
+
+function filterMovies() {
+    const query = document.getElementById("search")
+        .value.toLowerCase().trim();
+
+    const selectedGenre = document.getElementById("genre").value;
+
+    const filtered = movies.filter(movie =>
+        movie.title.toLowerCase().includes(query) &&
+        (selectedGenre === "all" || movie.genre === selectedGenre)
+    );
+
+    renderMovies(filtered);
+}
+
+function showDetails(movie) {
+    document.getElementById("modalTitle").textContent = movie.title;
+
+    const details = document.getElementById("modalDetails");
+    details.replaceChildren();
+
+    const fields = [
+        ["Genre", movie.genre],
+        ["Release Date", movie.date],
+        ["Cast", movie.cast],
+        ["Audience Rating (demo)", movie.rating + " / 10"],
+        ["Critic Review Score (demo)", movie.critic],
+        ["Synopsis", movie.synopsis],
+        ["Critic Review", movie.review]
+    ];
+
+    fields.forEach(([label, value]) => {
+        const p = document.createElement("p");
+        const strong = document.createElement("strong");
+        strong.textContent = label + ": ";
+        p.append(strong, document.createTextNode(value));
+        details.appendChild(p);
+    });
+
+    document.getElementById("movieModal").style.display = "flex";
+}
+
+function closeModal() {
+    document.getElementById("movieModal").style.display = "none";
+}
+
+document.getElementById("search")
+    .addEventListener("input", filterMovies);
+
+document.getElementById("genre")
+    .addEventListener("change", filterMovies);
+
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape") closeModal();
+});
+
+renderMovies(movies);
+</script>
+
+</body>
+</html>
